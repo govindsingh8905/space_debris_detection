@@ -1,0 +1,4 @@
+[build]
+  base = "space-collision-system/frontend"
+  command = "npm run build"
+  publish = ".next"
