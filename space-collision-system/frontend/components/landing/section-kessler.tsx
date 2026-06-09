@@ -104,7 +104,7 @@ export function SectionKessler() {
           <p 
             className="cascade-statement text-editorial text-glow-dark px-10 py-8 rounded-xl"
             style={{
-              background: 'radial-gradient(circle, rgba(3, 3, 5, 0.75) 0%, rgba(3, 3, 5, 0) 80%)',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(2, 2, 4, 0.92) 0%, rgba(2, 2, 4, 0.7) 40%, rgba(2, 2, 4, 0.3) 70%, transparent 100%)',
             }}
           >
             One Collision.

@@ -121,7 +121,7 @@ export default function LandingPage() {
       <NavBar />
 
       {/* Storytelling & Product Sections Layered on top */}
-      <div className="relative z-10 w-full">
+      <div className="relative z-20 w-full">
         <HeroSection />          {/* Section 1 */}
         <SectionCongestion />    {/* Section 2 */}
         <SectionCollision />     {/* Section 3 */}

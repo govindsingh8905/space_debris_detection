@@ -5,12 +5,13 @@ export function SpaceBackground() {
     <>
       <div className="fixed inset-0 -z-30 bg-[#030305]" />
       <div
-        className="fixed -inset-[22%] -z-20 pointer-events-none opacity-70 space-bg-image"
+        className="fixed -inset-[22%] -z-20 pointer-events-none space-bg-image"
         style={{
           backgroundImage: 'url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=3000&auto=format&fit=crop")',
           backgroundSize: 'cover',
           backgroundPosition: '50% 42%',
           backgroundRepeat: 'no-repeat',
+          opacity: 0.35,
         }}
       />
       <div className="fixed -inset-[15%] -z-[19] pointer-events-none space-bg-dust" />

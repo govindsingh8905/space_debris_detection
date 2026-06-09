@@ -49,16 +49,16 @@ export function HeroSection() {
         { opacity: 1, duration: 1, delay: 2.4 }
       )
 
-      // Fade out hero content on scroll
+      // Fade out hero content on scroll — smooth, non-competing exit
       gsap.to(sectionRef.current, {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: 'bottom top',
-          scrub: 0.5,
+          end: '80% top',
+          scrub: 0.8,
         },
         opacity: 0,
-        y: -60,
+        y: -40,
       })
     }, sectionRef)
 
@@ -67,6 +67,9 @@ export function HeroSection() {
 
   return (
     <section ref={sectionRef} className="hero" id="hero">
+      {/* Dark radial gradient backdrop scrim for typography pop */}
+      <div className="hero__scrim" />
+
       <h1 ref={titleRef} className="hero__title" style={{ opacity: 0 }}>
         The Race To Save
         <br />
