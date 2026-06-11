@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 export function SectionMission() {
   const sectionRef = useRef<HTMLElement>(null)
   const textRef = useRef<HTMLParagraphElement>(null)
-  const ctaRef = useRef<HTMLAnchorElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!sectionRef.current) return
