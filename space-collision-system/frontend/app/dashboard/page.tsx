@@ -4,24 +4,20 @@ import { useState, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SpaceBackground } from '@/components/space-background'
-import { LoginPage } from '@/components/login-page'
-import { StatsSidebar } from '@/components/stats-sidebar'
-import { AlertPanel } from '@/components/alert-panel'
-import { ObjectDetails } from '@/components/object-details'
-import { TimelineController } from '@/components/timeline-controller'
-import { AgentPanel } from '@/components/agent-panel'
-import { 
-  fetchSpaceObjects, 
-  detectCollisions,
-  type SpaceObject,
-  type CollisionAlert
-} from '@/lib/space-data'
+import { LaunchSystem } from '@/components/launch-system'
+import { MissionControlSidebar } from '@/components/mission-control-sidebar'
+import { LiveConjunctionAlerts } from '@/components/live-conjunction-alerts'
+import { RiskAssessmentInterface } from '@/components/risk-assessment-interface'
+import { SimulationInterface } from '@/components/simulation-interface'
+import { AiAnalysisInterface } from '@/components/ai-analysis-interface'
+import { orbitalApi } from '@/lib/space-data'
+import type { SpaceObject, CollisionAlert } from '@/services/types'
 import { toast } from 'sonner'
 
 // Dynamic import for Three.js component to avoid SSR issues
-const Globe3D = dynamic(
-  () => import('@/components/globe-3d').then((mod) => mod.Globe3D),
-  { 
+const OrbitalVisualization = dynamic(
+  () => import('@/components/orbital-visualization').then((mod) => mod.OrbitalVisualization),
+  {
     ssr: false,
     loading: () => (
       <div className="w-full h-full flex items-center justify-center">
@@ -38,7 +34,7 @@ const Globe3D = dynamic(
   }
 )
 
-export default function OrbitalShieldDashboard() {
+export default function NexusMissionOperationsDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [spaceObjects, setSpaceObjects] = useState<SpaceObject[]>([])
   const [alerts, setAlerts] = useState<CollisionAlert[]>([])
@@ -47,46 +43,54 @@ export default function OrbitalShieldDashboard() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [activeAiAlert, setActiveAiAlert] = useState<CollisionAlert | null>(null)
-  
+
   const [whatIfMode, setWhatIfMode] = useState<'no-action' | 'avoid'>('no-action')
   const [cascadedAlerts, setCascadedAlerts] = useState<Set<string>>(new Set())
-  
-  const globalRiskLevel = alerts.some(a => a.riskLevel === 'high') 
-    ? 'HIGH' 
-    : alerts.some(a => a.riskLevel === 'medium') 
-      ? 'MEDIUM' 
+
+  const globalRiskLevel = alerts.some(a => a.riskLevel === 'high')
+    ? 'HIGH'
+    : alerts.some(a => a.riskLevel === 'medium')
+      ? 'MEDIUM'
       : 'LOW'
-  
+
   useEffect(() => {
     let mounted = true
-    
+
     const loadData = async () => {
       try {
-        const cached = sessionStorage.getItem('spaceObjectsData')
-        if (cached) {
-          const parsed = JSON.parse(cached)
+        const cachedObjects = sessionStorage.getItem('spaceObjectsData')
+        const cachedAlerts = sessionStorage.getItem('spaceAlertsData')
+        if (cachedObjects && cachedAlerts) {
+          const parsedObjects = JSON.parse(cachedObjects)
+          const parsedAlerts = JSON.parse(cachedAlerts)
           if (mounted) {
-            setSpaceObjects(parsed)
-            setAlerts(detectCollisions(parsed))
+            setSpaceObjects(parsedObjects)
+            setAlerts(parsedAlerts)
           }
           return
         }
-      } catch (e) {}
-      
-      const objects = await fetchSpaceObjects()
-      if (mounted) {
-        setSpaceObjects(objects)
-        setAlerts(detectCollisions(objects))
-        try {
-          sessionStorage.setItem('spaceObjectsData', JSON.stringify(objects))
-        } catch (e) {}
+      } catch (e) { }
+
+      try {
+        const objectsRes = await orbitalApi.objects()
+        const alertsRes = await orbitalApi.conjunctions()
+        if (mounted) {
+          setSpaceObjects(objectsRes.objects)
+          setAlerts(alertsRes.events)
+          try {
+            sessionStorage.setItem('spaceObjectsData', JSON.stringify(objectsRes.objects))
+            sessionStorage.setItem('spaceAlertsData', JSON.stringify(alertsRes.events))
+          } catch (e) { }
+        }
+      } catch (err) {
+        console.error("Failed to load space data", err)
       }
     }
-    
+
     loadData()
     return () => { mounted = false }
   }, [])
-  
+
   useEffect(() => {
     if (!isPlaying) return
     const interval = setInterval(() => {
@@ -97,14 +101,14 @@ export default function OrbitalShieldDashboard() {
     }, 100)
     return () => clearInterval(interval)
   }, [isPlaying, playbackSpeed])
-  
+
   useEffect(() => {
     if (alerts.length > 0 && !activeAiAlert) {
       const highestAlert = alerts.find(a => a.riskLevel === 'high')
       if (highestAlert) setActiveAiAlert(highestAlert)
     }
   }, [alerts])
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setAlerts(prev => prev.map(alert => ({
@@ -115,7 +119,7 @@ export default function OrbitalShieldDashboard() {
     }, 5000)
     return () => clearInterval(interval)
   }, [])
-  
+
   const handleAlertClick = useCallback((alert: CollisionAlert) => {
     const obj = spaceObjects.find(o => o.name === alert.object1)
     if (obj) setSelectedObject(obj)
@@ -129,20 +133,28 @@ export default function OrbitalShieldDashboard() {
     for (let i = 0; i < 8; i++) {
       newDebris.push({
         id: `DEB-CASC-${alert.id}-${i}`,
+        noradId: 90000 + i,
         name: `Cascade Debris ${i}`,
         type: 'debris',
         subType: 'debris',
         priority: 'Low',
         orbitType: obj1.orbitType,
-        position: { 
+        position: {
           x: obj1.position.x + (Math.random() - 0.5) * 0.05,
           y: obj1.position.y + (Math.random() - 0.5) * 0.05,
           z: obj1.position.z + (Math.random() - 0.5) * 0.05
         },
+        eciKm: { x: 0, y: 0, z: 0 },
+        velocityVector: { x: 0, y: 0, z: 0 },
         velocity: obj1.velocity + (Math.random() - 0.5),
         altitude: obj1.altitude,
         inclination: obj1.inclination + (Math.random() - 0.5) * 5,
         riskLevel: 'low',
+        riskClassification: 'LOW',
+        riskScore: 10,
+        confidenceScore: 80,
+        source: 'simulated',
+        epoch: new Date().toISOString(),
         size: 0.05 + Math.random() * 0.2
       })
     }
@@ -181,43 +193,43 @@ export default function OrbitalShieldDashboard() {
       }
       return obj
     }))
-    
+
     setAlerts(prev => prev.filter(a => {
       const isRelated = a.object1 === selectedObject?.name || a.object2 === selectedObject?.name
       return !isRelated
     }))
-    
+
     if (activeAiAlert && (activeAiAlert.object1 === selectedObject?.name || activeAiAlert.object2 === selectedObject?.name)) {
       setActiveAiAlert(null)
     }
-    
+
     toast.success("Avoidance maneuver executed", {
       description: `${selectedObject?.name || 'Object'} moved to a safer orbit.`,
       style: { background: '#0a192f', border: '1px solid #4ade80', color: '#4ade80' }
     })
-    
+
     if (selectedObject && selectedObject.id === objectId) {
       setSelectedObject(prev => prev ? { ...prev, riskLevel: 'low', avoided: true, altitude: prev.altitude + 50 } : null)
     }
   }, [selectedObject])
-  
+
   const handleReset = useCallback(() => {
     setTimeOffset(0)
     setIsPlaying(false)
   }, [])
-  
+
   return (
     <AnimatePresence mode="wait">
       {!isAuthenticated && (
         <motion.div key="login" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
-          <LoginPage onLogin={() => setIsAuthenticated(true)} />
+          <LaunchSystem onLogin={() => setIsAuthenticated(true)} />
         </motion.div>
       )}
       {isAuthenticated && (
         <motion.div key="dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
           <div className="h-screen w-screen overflow-hidden relative">
             <SpaceBackground />
-            
+
             <motion.div
               initial={false}
               animate={{ opacity: activeAiAlert ? [0, 0.06, 0] : 0 }}
@@ -225,7 +237,7 @@ export default function OrbitalShieldDashboard() {
               className="absolute inset-0 pointer-events-none z-10"
               style={{ boxShadow: activeAiAlert ? 'inset 0 0 120px rgba(239,68,68,0.15)' : 'none' }}
             />
-            
+
             <div className="relative z-10 h-full flex">
               <motion.div
                 initial={{ x: -100, opacity: 0 }}
@@ -233,11 +245,11 @@ export default function OrbitalShieldDashboard() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="h-full"
               >
-                <StatsSidebar objects={spaceObjects} riskLevel={globalRiskLevel} />
+                <MissionControlSidebar objects={spaceObjects} riskLevel={globalRiskLevel} />
               </motion.div>
-              
+
               <div className="flex-1 relative">
-                <Globe3D
+                <OrbitalVisualization
                   objects={spaceObjects}
                   alerts={alerts}
                   selectedObject={selectedObject}
@@ -245,16 +257,16 @@ export default function OrbitalShieldDashboard() {
                   timeOffset={timeOffset}
                   whatIfMode={whatIfMode}
                 />
-                
+
                 {selectedObject && (
-                  <ObjectDetails
+                  <RiskAssessmentInterface
                     object={selectedObject}
                     allObjects={spaceObjects}
                     onClose={() => setSelectedObject(null)}
                     onAvoidCollision={handleAvoidCollision}
                   />
                 )}
-                
+
                 {!selectedObject && (
                   <>
                     <div className="absolute bottom-[4.5rem] left-1/2 -translate-x-1/2 z-30">
@@ -273,7 +285,7 @@ export default function OrbitalShieldDashboard() {
                         </button>
                       </div>
                     </div>
-                    <TimelineController
+                    <SimulationInterface
                       timeOffset={timeOffset}
                       isPlaying={isPlaying}
                       onTimeChange={setTimeOffset}
@@ -284,7 +296,7 @@ export default function OrbitalShieldDashboard() {
                     />
                   </>
                 )}
-                
+
                 <motion.div
                   initial={{ y: -20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -309,25 +321,25 @@ export default function OrbitalShieldDashboard() {
                   </span>
                 </motion.div>
               </div>
-              
+
               <motion.div
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="h-full z-20"
               >
-                <AlertPanel alerts={alerts} onAlertClick={handleAlertClick} />
+                <LiveConjunctionAlerts alerts={alerts} onAlertClick={handleAlertClick} />
               </motion.div>
               
-              <AgentPanel activeAlert={activeAiAlert} />
+              <AiAnalysisInterface activeAlert={activeAiAlert} />
             </div>
-            
+
             <div className="absolute top-0 left-0 w-16 h-16 border-l border-t border-cyan-500/8 pointer-events-none" />
             <div className="absolute top-0 right-0 w-16 h-16 border-r border-t border-cyan-500/8 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-16 h-16 border-l border-b border-cyan-500/8 pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-16 h-16 border-r border-b border-cyan-500/8 pointer-events-none" />
-            
-            <div 
+
+            <div
               className="fixed inset-0 pointer-events-none z-50 opacity-[0.015] scanline"
             />
           </div>

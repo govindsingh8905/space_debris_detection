@@ -17,7 +17,7 @@ function useSectionProgress(sectionRef: React.RefObject<HTMLElement | null>) {
       const rect = section.getBoundingClientRect()
       const total = rect.height + window.innerHeight
       const next = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / total))
-      setProgress((current) => (Math.abs(current - next) > 0.01 ? next : current))
+      setProgress(next)
     }
 
     const onScroll = () => {
@@ -81,7 +81,7 @@ export function SectionCollision() {
                 className="word"
                 style={{
                   color: isActive ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.08)',
-                  transition: 'color 0.4s ease',
+                  transition: 'color 0.15s ease-out',
                 }}
               >
                 {word}

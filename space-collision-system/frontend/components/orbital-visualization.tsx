@@ -6,7 +6,7 @@ import { OrbitControls, Stars, Html, useTexture, Trail } from '@react-three/drei
 import * as THREE from 'three'
 import type { SpaceObject, CollisionAlert } from '@/lib/space-data'
 
-interface Globe3DProps {
+interface OrbitalVisualizationProps {
   objects: SpaceObject[]
   alerts: CollisionAlert[]
   selectedObject: SpaceObject | null
@@ -398,7 +398,7 @@ function CollisionVisualizer({ obj1, obj2, timeOffset }: { obj1: any, obj2: any,
   )
 }
 
-function Scene(props: Globe3DProps) {
+function Scene(props: OrbitalVisualizationProps) {
   const { objects, alerts, selectedObject, onSelectObject, timeOffset, whatIfMode } = props
   const backgroundObjects = useMemo(() => objects.filter(o => o.isBackground), [objects])
   const mainObjects = useMemo(() => objects.filter(o => !o.isBackground), [objects])
@@ -458,7 +458,7 @@ function Scene(props: Globe3DProps) {
   )
 }
 
-export function Globe3D(props: Globe3DProps) {
+export function OrbitalVisualization(props: OrbitalVisualizationProps) {
   const [filter, setFilter] = useState<'all' | 'no-debris' | 'no-military'>('all')
 
   const filteredObjects = useMemo(() => {

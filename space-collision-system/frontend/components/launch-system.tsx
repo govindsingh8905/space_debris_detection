@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, Eye, EyeOff, Fingerprint, Satellite, AlertTriangle, ChevronRight, Lock, User, Zap, Activity } from 'lucide-react'
 
-interface LoginPageProps {
+interface LaunchSystemProps {
   onLogin: () => void
 }
 
@@ -97,7 +97,7 @@ const TERMINAL_BOOT = [
   '> Operator authentication required.',
 ]
 
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LaunchSystem({ onLogin }: LaunchSystemProps) {
   const [operatorId, setOperatorId] = useState('')
   const [token, setToken] = useState('')
   const [showToken, setShowToken] = useState(false)

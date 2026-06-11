@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Brain, Globe, Rocket, ShieldAlert, Cpu, Activity, CheckCircle2 } from 'lucide-react'
 import type { CollisionAlert } from '@/lib/space-data'
 
-interface AgentPanelProps {
+interface AiAnalysisInterfaceProps {
   activeAlert: CollisionAlert | null
   onDecisionComplete?: () => void
 }
 
 type AgentPhase = 'IDLE' | 'DETECTION' | 'ANALYSIS' | 'DECISION'
 
-export function AgentPanel({ activeAlert, onDecisionComplete }: AgentPanelProps) {
+export function AiAnalysisInterface({ activeAlert, onDecisionComplete }: AiAnalysisInterfaceProps) {
   const [phase, setPhase] = useState<AgentPhase>('IDLE')
   const [logs, setLogs] = useState<{ id: string; agent: string; text: string; icon: any; color: string }[]>([])
   

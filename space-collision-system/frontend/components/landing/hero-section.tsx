@@ -80,10 +80,16 @@ export function HeroSection() {
         More than 40,000 tracked objects and over 1.2 million debris fragments are reshaping the future of Earth's orbit.
       </p>
 
-      <Link ref={ctaRef} href="/dashboard" className="hero__cta" style={{ opacity: 0 }}>
-        Launch System
-        <ArrowRight className="hero__cta-arrow" />
-      </Link>
+      <div ref={ctaRef} style={{ display: 'flex', gap: '20px', marginTop: '48px', opacity: 0 }}>
+        <Link href="/dashboard" className="hero__cta" style={{ marginTop: 0 }}>
+          Launch System
+          <ArrowRight className="hero__cta-arrow" />
+        </Link>
+        <a href="https://orbitalsaiosk.netlify.app/" target="_blank" rel="noopener noreferrer" className="hero__cta" style={{ marginTop: 0 }}>
+          Backend Structure
+          <ArrowRight className="hero__cta-arrow" />
+        </a>
+      </div>
 
       <div ref={scrollRef} className="hero__scroll" style={{ opacity: 0 }}>
         <div className="hero__scroll-line">

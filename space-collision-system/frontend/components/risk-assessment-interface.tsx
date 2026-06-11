@@ -2,21 +2,20 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Satellite, AlertTriangle, Gauge, Mountain, Compass, Calendar, Ruler, Flag, Brain, ShieldAlert } from 'lucide-react'
-import type { SpaceObject } from '@/lib/space-data'
-import { calculatePredictionConfidence, calculateRiskScore } from '@/lib/space-data'
+import type { SpaceObject } from '@/services/types'
 
-interface ObjectDetailsProps {
+interface RiskAssessmentInterfaceProps {
   object: SpaceObject | null
   allObjects: SpaceObject[]
   onClose: () => void
   onAvoidCollision?: (objectId: string) => void
 }
 
-export function ObjectDetails({ object, allObjects, onClose, onAvoidCollision }: ObjectDetailsProps) {
+export function RiskAssessmentInterface({ object, allObjects, onClose, onAvoidCollision }: RiskAssessmentInterfaceProps) {
   if (!object) return null
   
-  const confidence = calculatePredictionConfidence(object)
-  const riskScore = calculateRiskScore(object, allObjects)
+  const confidence = object.confidenceScore
+  const riskScore = object.riskScore
   
   const getTypeColor = () => {
     if (object.riskLevel === 'high' && !object.avoided) return '#EF4444'

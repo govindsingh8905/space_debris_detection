@@ -4,12 +4,12 @@ import { motion } from 'framer-motion'
 import { Satellite, AlertTriangle, Shield, Radio } from 'lucide-react'
 import type { SpaceObject } from '@/lib/space-data'
 
-interface StatsSidebarProps {
+interface MissionControlSidebarProps {
   objects: SpaceObject[]
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH'
 }
 
-export function StatsSidebar({ objects, riskLevel }: StatsSidebarProps) {
+export function MissionControlSidebar({ objects, riskLevel }: MissionControlSidebarProps) {
   const totalSatellites = objects.filter(o => o.type === 'satellite' || o.type === 'station').length
   const totalDebris = objects.filter(o => o.type === 'debris').length
   const highRiskObjects = objects.filter(o => o.riskLevel === 'high').length

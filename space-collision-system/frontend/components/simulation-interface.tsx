@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Play, Pause, RotateCcw, Clock, FastForward } from 'lucide-react'
 
-interface TimelineControllerProps {
+interface SimulationInterfaceProps {
   timeOffset: number
   isPlaying: boolean
   onTimeChange: (time: number) => void
@@ -13,7 +13,7 @@ interface TimelineControllerProps {
   onSpeedChange: (speed: number) => void
 }
 
-export function TimelineController({
+export function SimulationInterface({
   timeOffset,
   isPlaying,
   onTimeChange,
@@ -21,7 +21,7 @@ export function TimelineController({
   onReset,
   playbackSpeed,
   onSpeedChange
-}: TimelineControllerProps) {
+}: SimulationInterfaceProps) {
   const formatTime = (hours: number) => {
     const h = Math.floor(hours)
     const m = Math.floor((hours - h) * 60)

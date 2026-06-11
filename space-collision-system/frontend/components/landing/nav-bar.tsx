@@ -17,9 +17,14 @@ export function NavBar() {
       <Link href="/" className="perigee-nav__brand">
         Perigee
       </Link>
-      <Link href="/dashboard" className="perigee-nav__cta">
-        Launch System
-      </Link>
+      <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+        <a href="https://orbitalsaiosk.netlify.app/" target="_blank" rel="noopener noreferrer" className="perigee-nav__cta">
+          Backend Structure
+        </a>
+        <Link href="/dashboard" className="perigee-nav__cta">
+          Launch System
+        </Link>
+      </div>
     </nav>
   )
 }

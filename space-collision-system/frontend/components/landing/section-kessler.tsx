@@ -17,7 +17,7 @@ function useSectionProgress(sectionRef: React.RefObject<HTMLElement | null>) {
       const rect = section.getBoundingClientRect()
       const total = rect.height + window.innerHeight
       const next = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / total))
-      setProgress((current) => (Math.abs(current - next) > 0.01 ? next : current))
+      setProgress(next)
     }
 
     const onScroll = () => {
@@ -70,7 +70,7 @@ export function SectionKessler() {
                 className="cascade-step"
                 style={{
                   opacity: isActive ? 1 : 0.12,
-                  transition: 'opacity 0.4s ease',
+                  transition: 'opacity 0.15s ease-out',
                 }}
               >
                 <span className="cascade-step__label" style={{ fontSize: '13px' }}>
@@ -85,7 +85,7 @@ export function SectionKessler() {
                     background: isActive
                       ? 'linear-gradient(to bottom, #E85454, rgba(232, 84, 84, 0.4))'
                       : 'rgba(255, 255, 255, 0.1)',
-                    transition: 'opacity 0.4s ease, background 0.4s ease',
+                    transition: 'opacity 0.15s ease-out, background 0.15s ease-out',
                   }}
                 />
               )}
@@ -98,7 +98,7 @@ export function SectionKessler() {
           style={{
             opacity: statementOpacity,
             marginTop: '80px',
-            transition: 'opacity 0.3s ease',
+            transition: 'opacity 0.15s ease-out',
           }}
         >
           <p 

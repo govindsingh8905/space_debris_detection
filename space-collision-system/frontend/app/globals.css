@@ -156,9 +156,9 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 50% 50%, rgba(2, 2, 4, 0.9) 0%, rgba(2, 2, 4, 0.45) 60%, rgba(2, 2, 4, 0) 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(2, 2, 4, 0.75) 0%, rgba(2, 2, 4, 0.3) 60%, rgba(2, 2, 4, 0) 100%);
   pointer-events: none;
-  opacity: 0.95;
+  opacity: 0.65;
 }
 
 .perigee-section--hero {

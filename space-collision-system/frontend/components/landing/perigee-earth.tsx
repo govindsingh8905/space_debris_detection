@@ -804,14 +804,14 @@ export function PerigeeEarth({ progressRef }: PerigeeEarthProps) {
           antialias: false,
           alpha: true,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.05,
+          toneMappingExposure: 1.3,
           powerPreference: 'high-performance',
         }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.015} />
-        <directionalLight position={[12, 3, 5]} intensity={2.8} color="#fffae6" />
-        <hemisphereLight args={['#1c3e7a', '#000000', 0.15]} />
+        <ambientLight intensity={0.04} />
+        <directionalLight position={[12, 3, 5]} intensity={3.0} color="#fffae6" />
+        <hemisphereLight args={['#1c3e7a', '#000000', 0.3]} />
         
         <DeepStars />
         <Suspense fallback={null}>

@@ -64,15 +64,19 @@ export function SectionMission() {
         “The future of space depends on what we track today.”
       </p>
 
-      <Link
+      <div
         ref={ctaRef}
-        href="/dashboard"
-        className="hero__cta"
-        style={{ opacity: 0, marginTop: '56px' }}
+        style={{ display: 'flex', gap: '20px', marginTop: '56px', opacity: 0 }}
       >
-        Launch System
-        <ArrowRight className="hero__cta-arrow" />
-      </Link>
+        <Link href="/dashboard" className="hero__cta" style={{ marginTop: 0 }}>
+          Launch System
+          <ArrowRight className="hero__cta-arrow" />
+        </Link>
+        <a href="https://orbitalsaiosk.netlify.app/" target="_blank" rel="noopener noreferrer" className="hero__cta" style={{ marginTop: 0 }}>
+          Backend Structure
+          <ArrowRight className="hero__cta-arrow" />
+        </a>
+      </div>
     </section>
   )
 }

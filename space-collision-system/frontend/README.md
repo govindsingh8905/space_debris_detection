@@ -1,101 +1,118 @@
-# Orbital Shield AI
+# NEXUS Mission Operations Dashboard
 
-A NASA/SpaceX-inspired space intelligence dashboard for real-time satellite tracking, collision detection, and orbital debris monitoring. Recently updated with live API integration and advanced AI simulation tools.
+This workspace contains the Next.js frontend shell for two separate product layers:
 
-## ✨ New Features
+- `/` - Landing Experience, **"The Race To Save Orbit"**.
+- `/dashboard` - NEXUS Mission Operations Dashboard, the actual frontend application.
 
-### 📡 Live CelesTrak Integration
-- Replaced mock data with **real active satellite data** via the CelesTrak API.
-- Live tracking of known targets including ISS (ZARYA), STARLINK, GALILEO, and USA satellites.
-- Deterministic 3D pseudo-orbit projections using actual NORAD ID seeds.
-- Client-side `sessionStorage` caching for smooth performance and rate-limit prevention.
+The landing experience explains orbital debris, collision risk, Kessler Syndrome, and ESA-style statistics. It is a storytelling and awareness layer only. The operational frontend begins after the user clicks **Launch System** and enters `/dashboard`.
 
-### 🧠 Advanced AI & Simulation
-- **Multi-Agent Decision Panel**: Real-time AI analysis showing detection, analysis, and execution phases with an integrated Confidence Meter.
-- **What-If Simulation Mode**: A timeline toggle to preview predictive trajectories. Displays safe avoidance maneuvers (green) vs. direct collision paths (red) projected hours ahead.
-- **Mission Priority Protocol**: AI automatically classifies satellites by type (Station, Military, Nav, Comm) and assigns Mission Priority levels (Critical to Low).
-- **Debris Cascade Engine**: Simulates Kessler Syndrome by automatically spawning orbital debris clusters dynamically when un-avoided collisions occur.
+## Frontend Application Boundary
 
-### 🌍 Enhanced 3D & UI Upgrades
-- **Earth Risk Heatmap**: A subtle inner-atmosphere additive glowing mesh visualizing highly congested LEO risk zones.
-- **High-Density Instanced Render**: Flawlessly renders 50+ live API objects alongside 350+ background orbiters at 60 FPS utilizing `InstancedMesh`.
-- **Advanced Timeline Controller**: Fluid time scrubbing allowing predictions +1h, +24h, and +72h ahead in real-time.
-- **Secure Gateway**: A cinematic Authentication Portal matching the "Antigravity" premium aesthetic.
+```text
+Landing Page (/)
+  |
+  v
+Launch System
+  |
+  v
+Mission Operations Dashboard (/dashboard)
+  |
+  v
+Backend Services
+  |
+  v
+Space Data Sources
+```
 
-## 🛠️ Tech Stack
+The current Collision Avoidance System dashboard is the real frontend product. It should be understood as a Mission Operations Command Center for a Space Situational Awareness (SSA), Space Traffic Management, and orbital collision avoidance platform.
 
-- **Framework**: Next.js 15 (App Router)
-- **3D Rendering**: Three.js with React Three Fiber (`@react-three/drei`)
-- **Animations**: Framer Motion
-- **Styling**: Tailwind CSS v4 & custom Glassmorphism UI
-- **Language**: TypeScript
-- **Data Source**: CelesTrak (`gp.php` API)
+## Frontend Stack
 
-## 🚀 Getting Started
+- Next.js 15+ with the App Router
+- React
+- TypeScript
+- Framer Motion
+- Three.js
+- React Three Fiber
+
+## Mission Operations Modules
+
+1. **Detection Interface**
+   - Detects potential conjunction events between satellites and debris.
+   - Outputs closest approach distance, relative velocity, and detection confidence.
+
+2. **Risk Assessment Interface**
+   - Calculates and visualizes collision probability.
+   - Outputs Low Risk, Medium Risk, High Risk, and Critical Risk classifications.
+
+3. **Maneuver Recommendation Interface**
+   - Presents collision avoidance recommendations.
+   - Outputs Delta-V, burn direction, fuel impact, and mission impact.
+
+4. **AI Analysis Interface**
+   - Summarizes threats, explains risks, compares maneuver options, and assists operators.
+   - AI never directly controls satellites. The human operator remains in control.
+
+5. **72-Hour Simulation Interface**
+   - Projects orbital behavior for the next 72 hours.
+   - Outputs future conjunctions, collision forecasts, safe maneuver windows, and risk timelines.
+
+6. **Live Conjunction Alerts**
+   - Displays active warnings and real-time alert context.
+
+7. **Orbital Visualization**
+   - Renders Earth, satellites, debris, orbital paths, and conjunction zones.
+
+8. **Mission Control Dashboard**
+   - Provides the command-center surface that organizes alerts, risk state, visualization, AI analysis, and operator decisions.
+
+## Runtime Flow
+
+```text
+NEXUS Mission Operations Dashboard
+  |
+  v
+Detection
+  |
+  v
+Risk Assessment
+  |
+  v
+Maneuver Call
+  |
+  v
+AI Systems
+  |
+  v
+72-Hour Protocol
+  |
+  v
+Operator Decision
+```
+
+## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
-- pnpm (recommended) or npm
+- pnpm or npm
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd orbital-shield-ai
-
-# Install dependencies
 pnpm install
-
-# Start the development server
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
+Open [http://localhost:3000](http://localhost:3000) to view the landing experience. Click **Launch System** or open [http://localhost:3000/dashboard](http://localhost:3000/dashboard) to enter the NEXUS Mission Operations Dashboard.
 
-## 📂 Project Structure
+## Performance Notes
 
-```
-├── app/
-│   ├── globals.css          # Global styles, Tailwind directives, glassmorphism tokens
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Main dashboard (Simulation State & Logic)
-├── components/
-│   ├── agent-panel.tsx      # Multi-Agent decision UI and confidence meter
-│   ├── alert-panel.tsx      # Collision warnings with proximity data
-│   ├── globe-3d.tsx         # 3D Earth, paths, trails, and heatmap via R3F
-│   ├── object-details.tsx   # Selected object metrics and Mission Priority UI
-│   ├── space-background.tsx # Animated starfield background
-│   ├── stats-sidebar.tsx    # Live global metrics
-│   └── timeline-controller.tsx # Time simulation controls and What-If toggle
-├── lib/
-│   └── space-data.ts        # API Fetch logic, Collision Math, AI rules
-└── public/
-    └── textures/            # High-res Earth diffuses, normal maps, clouds
-```
+- Deterministic math caching helps preserve 60 FPS web stability.
+- Memoized object arrays keep repeated orbital calculations efficient.
+- High-density orbital traffic is rendered with instancing-oriented Three.js patterns where possible.
 
-## 🎮 Usage
+## License
 
-### 3D Globe Navigation
-- **Click and drag** to rotate the Earth and Orbital planes.
-- **Scroll** to zoom in and out of orbits.
-- **Select an object** to isolate its telemetry and engage the AI panel.
-
-### Collision Avoidance
-1. Wait for a `High Risk` alert in the right panel.
-2. The AI will initiate its Decision Phase.
-3. Toggle the **What-If Mode** at the bottom to view the collision trajectory.
-4. Click **Avoid Collision** to execute a simulated orbital burn, offsetting the asset and generating a safe green trajectory.
-
-### Debris Cascade
-- Allow the Timeline to reach `TCA` (Time to Closest Approach) on a high-risk collision without taking action. 
-- The UI will throw a system error and dynamically spawn secondary debris fragments representing a catastrophic event.
-
-## ⚡ Performance Notes
-
-- The system now uses deterministic math caching over live TLE conversion libraries to ensure 60 FPS stability on the web.
-- `useMemo` hooks heavily manage massive object arrays, ensuring only collision calculations run per-frame.
-- Background traffic utilizes `instancedMesh` ensuring an active, busy sky without GPU bottlenecking.
-
-## 📜 License
-MIT License - see LICENSE file for details.
+MIT License

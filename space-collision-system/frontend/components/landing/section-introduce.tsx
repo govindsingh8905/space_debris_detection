@@ -15,7 +15,7 @@ function useSectionProgress(sectionRef: React.RefObject<HTMLElement | null>) {
       const rect = section.getBoundingClientRect()
       const total = rect.height + window.innerHeight
       const next = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / total))
-      setProgress((current) => (Math.abs(current - next) > 0.01 ? next : current))
+      setProgress(next)
     }
 
     const onScroll = () => {
@@ -51,7 +51,7 @@ export function SectionIntroduce() {
         style={{
           opacity: s6 > 0.1 ? (s6 - 0.1) / 0.3 : 0,
           transform: `translateY(${Math.max(0, 20 - s6 * 20)}px)`,
-          transition: 'opacity 0.4s ease, transform 0.4s ease',
+          transition: 'opacity 0.15s ease-out, transform 0.15s ease-out',
         }}
       >
         Introducing
@@ -61,7 +61,7 @@ export function SectionIntroduce() {
         style={{
           opacity: s6 > 0.25 ? (s6 - 0.25) / 0.3 : 0,
           transform: `translateY(${Math.max(0, 30 - s6 * 30)}px)`,
-          transition: 'opacity 0.5s ease, transform 0.5s ease',
+          transition: 'opacity 0.15s ease-out, transform 0.15s ease-out',
         }}
       >
         Perigee
@@ -71,7 +71,7 @@ export function SectionIntroduce() {
         style={{
           opacity: s6 > 0.45 ? (s6 - 0.45) / 0.3 : 0,
           transform: `translateY(${Math.max(0, 20 - s6 * 20)}px)`,
-          transition: 'opacity 0.4s ease, transform 0.4s ease',
+          transition: 'opacity 0.15s ease-out, transform 0.15s ease-out',
         }}
       >
         Space Situational Awareness for everyone.

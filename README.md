@@ -1,100 +1,177 @@
-# Orbital Shield AI
+# Orbital Shield AI: NEXUS System Architecture
 
-A NASA/SpaceX-inspired space intelligence dashboard for real-time satellite tracking, collision detection, and orbital debris monitoring. Recently updated with live API integration and advanced AI simulation tools.
+NEXUS is a Space Situational Awareness (SSA), Space Traffic Management, and orbital collision avoidance platform. The product is intentionally split into two different layers: a public awareness experience and a mission operations application.
 
-##  New Features
+## Product Boundary
 
-### Live CelesTrak Integration
-- Replaced mock data with **real active satellite data** via the CelesTrak API.
-- Live tracking of known targets including ISS (ZARYA), STARLINK, GALILEO, and USA satellites.
-- Deterministic 3D pseudo-orbit projections using actual NORAD ID seeds.
-- Client-side `sessionStorage` caching for smooth performance and rate-limit prevention.
+### Layer 1 - Landing Experience: "The Race To Save Orbit"
 
-### Advanced AI & Simulation
-- **Multi-Agent Decision Panel**: Real-time AI analysis showing detection, analysis, and execution phases with an integrated Confidence Meter.
-- **What-If Simulation Mode**: A timeline toggle to preview predictive trajectories. Displays safe avoidance maneuvers (green) vs. direct collision paths (red) projected hours ahead.
-- **Mission Priority Protocol**: AI automatically classifies satellites by type (Station, Military, Nav, Comm) and assigns Mission Priority levels (Critical to Low).
-- **Debris Cascade Engine**: Simulates Kessler Syndrome by automatically spawning orbital debris clusters dynamically when un-avoided collisions occur.
+The landing page is the storytelling and education layer.
 
-###  Enhanced 3D & UI Upgrades
-- **Earth Risk Heatmap**: A subtle inner-atmosphere additive glowing mesh visualizing highly congested LEO risk zones.
-- **High-Density Instanced Render**: Flawlessly renders 50+ live API objects alongside 350+ background orbiters at 60 FPS utilizing `InstancedMesh`.
-- **Advanced Timeline Controller**: Fluid time scrubbing allowing predictions +1h, +24h, and +72h ahead in real-time.
-- **Secure Gateway**: A cinematic Authentication Portal matching the "Antigravity" premium aesthetic.
+- Explains the orbital debris problem.
+- Explains collision risk and Kessler Syndrome.
+- Shows ESA-style statistics and public awareness material.
+- Creates urgency before the operator enters the system.
+- Routes users into the platform through **Launch System**.
 
-##  Tech Stack
+This layer is not the primary frontend application and should not be treated as the operational product.
 
-- **Framework**: Next.js 15 (App Router)
-- **3D Rendering**: Three.js with React Three Fiber (`@react-three/drei`)
-- **Animations**: Framer Motion
-- **Styling**: Tailwind CSS v4 & custom Glassmorphism UI
-- **Language**: TypeScript
-- **Data Source**: CelesTrak (`gp.php` API)
+### Layer 2 - NEXUS Mission Operations Platform
 
-##  Getting Started
+The actual application begins only after the user clicks **Launch System**. The current Collision Avoidance System dashboard is the real frontend product: a Mission Operations Command Center for detection, risk assessment, maneuver planning, AI-assisted analysis, and operator decision support.
 
-### Prerequisites
-- Node.js 18+
-- pnpm (recommended) or npm
+## Correct Application Flow
 
-### Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd orbital-shield-ai
-
-# Install dependencies
-pnpm install
-
-# Start the development server
-pnpm dev
+```text
+Landing Page
+  |
+  v
+Launch System
+  |
+  v
+NEXUS Mission Operations Dashboard
+  |
+  v
+Detection
+  |
+  v
+Risk Assessment
+  |
+  v
+Maneuver Call
+  |
+  v
+AI Systems
+  |
+  v
+72-Hour Protocol
+  |
+  v
+Operator Decision
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
+## Architecture Diagram
 
-## 📂 Project Structure
-
-```
-├── app/
-│   ├── globals.css          # Global styles, Tailwind directives, glassmorphism tokens
-│   ├── layout.tsx           # Root layout
-│   └── page.tsx             # Main dashboard (Simulation State & Logic)
-├── components/
-│   ├── agent-panel.tsx      # Multi-Agent decision UI and confidence meter
-│   ├── alert-panel.tsx      # Collision warnings with proximity data
-│   ├── globe-3d.tsx         # 3D Earth, paths, trails, and heatmap via R3F
-│   ├── object-details.tsx   # Selected object metrics and Mission Priority UI
-│   ├── space-background.tsx # Animated starfield background
-│   ├── stats-sidebar.tsx    # Live global metrics
-│   └── timeline-controller.tsx # Time simulation controls and What-If toggle
-├── lib/
-│   └── space-data.ts        # API Fetch logic, Collision Math, AI rules
-└── public/
-    └── textures/            # High-res Earth diffuses, normal maps, clouds
+```mermaid
+flowchart TD
+  A["Landing Page\nThe Race To Save Orbit"] --> B["Launch System"]
+  B --> C["Frontend Application\nNEXUS Mission Operations Dashboard"]
+  C <-->|REST API + WebSocket telemetry| D["Backend Services\nFastAPI + Python"]
+  D <-->|TLE catalogs + orbital object data| E["Space Data Sources\nSpace-Track, satellite data, debris data"]
 ```
 
-##  Usage
+The landing page is a separate awareness layer. The frontend application is the Mission Operations Dashboard that starts after **Launch System**.
 
-### 3D Globe Navigation
-- **Click and drag** to rotate the Earth and Orbital planes.
-- **Scroll** to zoom in and out of orbits.
-- **Select an object** to isolate its telemetry and engage the AI panel.
+## Frontend Responsibilities
 
-### Collision Avoidance
-1. Wait for a `High Risk` alert in the right panel.
-2. The AI will initiate its Decision Phase.
-3. Toggle the **What-If Mode** at the bottom to view the collision trajectory.
-4. Click **Avoid Collision** to execute a simulated orbital burn, offsetting the asset and generating a safe green trajectory.
+The frontend starts after **Launch System** and represents the operational Collision Avoidance System UI.
 
-### Debris Cascade
-- Allow the Timeline to reach `TCA` (Time to Closest Approach) on a high-risk collision without taking action. 
-- The UI will throw a system error and dynamically spawn secondary debris fragments representing a catastrophic event.
+**Frontend stack**
 
-## ⚡ Performance Notes
+- Next.js
+- React
+- TypeScript
+- Framer Motion
+- Three.js
+- React Three Fiber
 
-- The system now uses deterministic math caching over live TLE conversion libraries to ensure 60 FPS stability on the web.
-- `useMemo` hooks heavily manage massive object arrays, ensuring only collision calculations run per-frame.
-- Background traffic utilizes `instancedMesh` ensuring an active, busy sky without GPU bottlenecking.
+**Frontend modules**
+
+1. **Detection Interface**
+   - Purpose: detect potential conjunction events between satellites and debris.
+   - Outputs: closest approach distance, relative velocity, detection confidence.
+
+2. **Risk Assessment Interface**
+   - Purpose: calculate probability of collision.
+   - Outputs: Low Risk, Medium Risk, High Risk, Critical Risk.
+
+3. **Maneuver Recommendation Interface**
+   - Purpose: generate and present collision avoidance recommendations.
+   - Outputs: Delta-V, burn direction, fuel impact, mission impact.
+
+4. **AI Analysis Interface**
+   - Purpose: explain the situation to human operators.
+   - Outputs: threat summaries, risk explanations, maneuver comparisons, operator assistance.
+   - Safety boundary: AI never directly controls satellites; the human operator remains in control.
+
+5. **72-Hour Simulation Interface**
+   - Purpose: project orbital behavior for the next 72 hours.
+   - Outputs: future conjunctions, collision forecasts, safe maneuver windows, risk timelines.
+
+6. **Live Conjunction Alerts**
+   - Streams active warnings and high-priority conjunction events.
+
+7. **Orbital Visualization**
+   - Shows satellites, debris, orbits, threat vectors, and conjunction zones.
+
+8. **Mission Control Dashboard**
+   - Hosts the operational panels, system status, alert context, and operator workflow.
+
+## Backend Responsibilities
+
+The backend is the data and computation engine beneath the Mission Operations Dashboard.
+
+**Backend stack**
+
+- FastAPI
+- Python
+
+**Backend responsibilities**
+
+- TLE Data Ingestion
+- Space-Track Integration
+- Orbit Propagation
+- Conjunction Analysis
+- Collision Prediction
+- Risk Scoring
+- Maneuver Generation
+- 72-Hour Forecasting
+- AI Reasoning
+- WebSocket Streaming
+
+## Backend Pipeline
+
+```text
+Satellite Data + Debris Data
+  |
+  v
+SGP4 Orbit Propagation
+  |
+  v
+Conjunction Detection
+  |
+  v
+Collision Probability Analysis
+  |
+  v
+Risk Classification
+  |
+  v
+Maneuver Engine
+  |
+  v
+AI Evaluation
+  |
+  v
+72-Hour Simulation
+  |
+  v
+Operator Recommendation
+```
+
+## Source Layout
+
+- `space-collision-system/frontend/app/page.tsx` - Landing Experience route.
+- `space-collision-system/frontend/app/dashboard/page.tsx` - NEXUS Mission Operations Dashboard route.
+- `space-collision-system/frontend/components/landing/` - Storytelling and awareness sections.
+- `space-collision-system/frontend/components/` - Mission operations dashboard modules.
+- `backend-aimodel/orbital-debris/backend/` - FastAPI backend services and SSA computation pipeline.
+- `backend-aimodel/orbital-debris/README.md` - Backend architecture and setup notes.
+
+## Operating Principle
+
+NEXUS should read as a professional aerospace monitoring system: an SSA platform, Space Traffic Management system, orbital collision avoidance platform, and Mission Operations Command Center. The landing page creates awareness; the dashboard supports operational decision-making.
 
 ## License
+
+MIT License

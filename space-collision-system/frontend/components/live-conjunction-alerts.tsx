@@ -4,12 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { AlertTriangle, Clock, Target, Zap } from 'lucide-react'
 import type { CollisionAlert } from '@/lib/space-data'
 
-interface AlertPanelProps {
+interface LiveConjunctionAlertsProps {
   alerts: CollisionAlert[]
   onAlertClick?: (alert: CollisionAlert) => void
 }
 
-export function AlertPanel({ alerts, onAlertClick }: AlertPanelProps) {
+export function LiveConjunctionAlerts({ alerts, onAlertClick }: LiveConjunctionAlertsProps) {
   const formatTime = (hours: number) => {
     if (hours < 1) return `${Math.round(hours * 60)}m`
     return `${hours.toFixed(1)}h`
@@ -73,7 +73,7 @@ export function AlertPanel({ alerts, onAlertClick }: AlertPanelProps) {
                     <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
                     <span className="text-[9px] font-mono font-bold uppercase" style={{ color }}>{alert.riskLevel}</span>
                   </div>
-                  <span className="text-[9px] font-mono text-white/15">{getTimeSince(alert.timestamp)}</span>
+                  <span className="text-[9px] font-mono text-white/15">{getTimeSince(new Date(alert.timestamp))}</span>
                 </div>
                 
                 {/* Objects */}
